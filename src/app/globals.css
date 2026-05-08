@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+  --navy-950: #050F1C;
+  --navy-900: #071525;
+  --navy-800: #0C1F35;
+  --navy-700: #112844;
+  --navy-600: #1A3A5C;
+  --navy-500: #1E4570;
+  --navy-text: #CBD5E1;
+  --navy-text-muted: #64748B;
+  --navy-border: #1E3A5F;
+}
+
+* {
+    scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--navy-950);
+  color: var(--navy-text);
+}
+
+@layer base {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+::-webkit-scrollbar {
+  display: none;
+}

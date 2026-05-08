@@ -1,0 +1,46 @@
+"use client"
+
+
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
+
+
+type NavLinkProps = {
+  href: string;
+  className?: string;
+  children: React.ReactNode;
+};
+
+const navLinkClass = "relative px-2 py-1 hover:text-white transition text-slate-300";
+
+const underlineVariants = {
+  initial: { width: 0 },
+  hover: { width: "100%" },
+};
+
+const NavLink = ({ href, className = "", children }: NavLinkProps) => {
+
+  const pathname = usePathname();
+
+  return (
+    <Link href={href} className={`${navLinkClass} ${className}`}>
+      <motion.span
+        className="relative inline-block"
+        initial="initial"
+        whileHover="hover"
+        animate="initial"
+      >
+        {children}
+        <motion.span
+          className="absolute left-0 -bottom-0.5 h-0.5 bg-orange-500"
+          variants={underlineVariants}
+          transition={{ duration: 0.3 }}
+          style={{ display: "block" }}
+        />
+      </motion.span>
+    </Link>
+  );
+};
+
+export default NavLink;

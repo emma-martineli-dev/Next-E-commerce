@@ -1,0 +1,140 @@
+"use client"; 
+import Image from 'next/image';
+import NavLink from '@utils/NavLink';
+import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from '@assets/assets';
+import { useAppContext } from '@context/AppContext';
+import { useClerk, UserButton } from '@clerk/nextjs';
+
+
+
+const Navbar = () => {
+
+
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: `/shop`, label: "Shop" },
+    { href: "/about", label: "About Us" },
+    { href: "/contact", label: "Contact" },
+  ];
+
+  const { isSeller, router, user } = useAppContext();
+  const { openSignIn } = useClerk(); 
+
+  return (
+    <nav className='flex items-center justify-between px-6 md:px-16 lg:px-32 py-3 border-b border-[#1E3A5F] bg-[#050F1C] text-slate-200'>
+        <Image
+            src={assets.logo}
+            alt='Logo'
+            className='w-28 md:w-32 cursor-pointer'
+            onClick={() => router.push('/')}
+        /> 
+        <div className='flex items-center gap-4 lg:gap-8 max-md:hidden'>
+          {navLinks.map((link) => (
+            <NavLink key={link.label} href={link.href}>
+              {link.label}
+            </NavLink>
+          ))}
+
+          {isSeller && 
+            <button
+              onClick={() => router.push("/seller")}
+              className='text-xs border border-slate-500 text-slate-300 px-4 py-1.5 rounded-full cursor-pointer hover:border-orange-500 hover:text-orange-400 transition'
+            >
+              Seller Dashboard
+            </button>}
+        </div>
+        <ul className='hidden md:flex items-center gap-4'>
+          <Image 
+            src={assets.search_icon}
+            alt="search icon"
+            className='w-4 h-4'
+          />
+          {user 
+          ? <>
+            <UserButton>
+              <UserButton.MenuItems>
+                <UserButton.Action 
+                  label='Cart'
+                  labelIcon={<CartIcon/>}
+                  onClick={() => router.push("/cart")}
+                />
+              </UserButton.MenuItems>
+              <UserButton.MenuItems>
+                <UserButton.Action 
+                  label='My Orders'
+                  labelIcon={<BagIcon/>}
+                  onClick={() => router.push("/my-orders")}
+                />
+              </UserButton.MenuItems>
+          </UserButton>
+          </>
+          :
+          <button
+            onClick={() => openSignIn()}
+            className='flex items-center gap-2 hover:text-white transition cursor-pointer'
+          >
+            <Image 
+              src={assets.user_icon}
+              alt='user icon'
+            />
+              Account
+          </button>}
+        </ul>
+
+        <div className='flex items-center md:hidden gap-3'>
+          {isSeller && 
+            <button 
+            onClick={() => router.push("/seller")}
+            className='text-xs border border-slate-500 text-slate-300 px-4 py-1.5 rounded-full cursor-pointer hover:border-orange-500 hover:text-orange-400 transition'>
+              Seller Dashboard
+            </button>
+          }
+
+          {
+           user 
+           ? <>
+               <UserButton>
+               <UserButton.MenuItems>
+                <UserButton.Action 
+                  label='Home'
+                  labelIcon={<HomeIcon/>}
+                  onClick={() => router.push("/")}
+                />
+               </UserButton.MenuItems> 
+               <UserButton.MenuItems>
+                <UserButton.Action 
+                  label='Products'
+                  labelIcon={<BoxIcon/>}
+                  onClick={() => router.push("/shop")}
+                />
+              </UserButton.MenuItems> 
+               <UserButton.MenuItems>
+                <UserButton.Action 
+                  label='Cart'
+                  labelIcon={<CartIcon/>}
+                  onClick={() => router.push("/cart")}
+                />
+              </UserButton.MenuItems> 
+               <UserButton.MenuItems>
+                <UserButton.Action 
+                  label='My Orders'
+                  labelIcon={<BagIcon/>}
+                  onClick={() => router.push("/my-orders")}
+                />
+              </UserButton.MenuItems> 
+           </UserButton>
+           </>
+           : <button onClick={() => openSignIn()} className='flex items-center gap-2 hover:text-white transition cursor-pointer'>
+            <Image src={assets.user_icon} alt="user icon" />
+            Account
+          </button>
+          }
+
+        </div>
+    </nav>
+  )
+}
+
+export default Navbar
+
