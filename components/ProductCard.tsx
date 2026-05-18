@@ -20,7 +20,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const { currency, router, user, addToCart } = useAppContext();
+  const { currency, router, user, isLoaded, addToCart } = useAppContext();
   const { openSignIn } = useClerk();
 
   /**
@@ -31,6 +31,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
    */
   const handleBuyNow = (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    // Don't do anything if Clerk is still loading
+    if (!isLoaded) {
+      return;
+    }
+    
     if (!user) {
       toast.error("Please sign in to purchase items.");
       openSignIn({ redirectUrl: `/shop/${product._id}` });
@@ -96,9 +102,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </p>
         <button
           onClick={handleBuyNow}
-          className="max-sm:hidden px-4 py-1.5 text-slate-300 border border-[#1E3A5F] rounded-full text-xs hover:bg-orange-600 hover:text-white hover:border-orange-600 transition cursor-pointer"
+          disabled={!isLoaded}
+          className={`max-sm:hidden px-4 py-1.5 text-slate-300 border border-[#1E3A5F] rounded-full text-xs transition cursor-pointer ${
+            !isLoaded 
+              ? 'opacity-50 cursor-not-allowed' 
+              : 'hover:bg-orange-600 hover:text-white hover:border-orange-600'
+          }`}
         >
-          Buy now
+          {!isLoaded ? 'Loading...' : 'Buy now'}
         </button>
       </div>
     </div>

@@ -34,7 +34,7 @@ export const AppContextProvider = (props: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const { openSignIn } = useClerk();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -96,7 +96,9 @@ export const AppContextProvider = (props: { children: ReactNode }) => {
   const addToCart = (itemId: string) => {
     if (!user) {
       toast.error("Please sign in to add items to your cart.");
-      openSignIn({ redirectUrl: pathname });
+      if (isLoaded) {
+        openSignIn({ redirectUrl: pathname });
+      }
       return;
     }
     const cartData = structuredClone(cartItems);
@@ -114,7 +116,9 @@ export const AppContextProvider = (props: { children: ReactNode }) => {
   const updateCartQuantity = (itemId: string, quantity: number) => {
     if (!user) {
       toast.error("Please sign in to manage your cart.");
-      openSignIn({ redirectUrl: pathname });
+      if (isLoaded) {
+        openSignIn({ redirectUrl: pathname });
+      }
       return;
     }
     const cartData = structuredClone(cartItems);
@@ -142,6 +146,7 @@ export const AppContextProvider = (props: { children: ReactNode }) => {
 
   const value: AppContextType = {
     user,
+    isLoaded,
     currency,
     router,
     isSeller,

@@ -17,17 +17,16 @@ import toast from "react-hot-toast";
 import { useAppContext } from "@context/AppContext";
 
 const useAuthGuard = (redirectUrl: string, message: string) => {
-  const { user } = useAppContext();
+  const { user, isLoaded } = useAppContext();
   const { openSignIn } = useClerk();
 
   useEffect(() => {
-    // user === null means Clerk has resolved and confirmed no session
-    // user === undefined means Clerk is still loading — do nothing yet
-    if (user === null) {
+    // Only check when Clerk has finished loading
+    if (isLoaded && user === null) {
       toast.error(message);
       openSignIn({ redirectUrl });
     }
-  }, [user]);
+  }, [user, isLoaded]);
 };
 
 export default useAuthGuard;

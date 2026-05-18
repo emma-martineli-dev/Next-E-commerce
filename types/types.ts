@@ -3,6 +3,7 @@ import type { UserResource } from "@clerk/types"
 
 export type AppContextType = {
   user: UserResource | null | undefined; 
+  isLoaded: boolean;
   currency: string | undefined;
   router: AppRouterInstance;
   isSeller: boolean;

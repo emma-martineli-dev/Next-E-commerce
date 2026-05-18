@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 
 const Product = () => {
     const { id } = useParams();
-    const { products, router, addToCart, user } = useAppContext();
+    const { products, router, addToCart, user, isLoaded } = useAppContext();
     const { openSignIn } = useClerk();
 
     const [mainImage, setMainImage] = useState<string | null>(null);
@@ -27,6 +27,11 @@ const Product = () => {
     }, [id, products]);
 
     const handleAddToCart = () => {
+        // Don't do anything if Clerk is still loading
+        if (!isLoaded) {
+            return;
+        }
+        
         if (!user) {
             toast.error("Please sign in to add items to your cart.");
             openSignIn({ redirectUrl: `/shop/${id}` });
@@ -36,6 +41,11 @@ const Product = () => {
     };
 
     const handleBuyNow = () => {
+        // Don't do anything if Clerk is still loading
+        if (!isLoaded) {
+            return;
+        }
+        
         if (!user) {
             toast.error("Please sign in to purchase items.");
             openSignIn({ redirectUrl: `/shop/${id}` });
@@ -140,15 +150,25 @@ const Product = () => {
                     <div className="flex items-center mt-10 gap-4">
                         <button
                             onClick={handleAddToCart}
-                            className="w-full py-3.5 bg-[#0C1F35] text-slate-300 hover:bg-[#112844] transition cursor-pointer border border-[#1E3A5F]"
+                            disabled={!isLoaded}
+                            className={`w-full py-3.5 border border-[#1E3A5F] transition ${
+                                !isLoaded
+                                    ? 'bg-[#0C1F35] text-slate-500 cursor-not-allowed opacity-50'
+                                    : 'bg-[#0C1F35] text-slate-300 hover:bg-[#112844] cursor-pointer'
+                            }`}
                         >
-                            Add to Cart
+                            {!isLoaded ? 'Loading...' : 'Add to Cart'}
                         </button>
                         <button
                             onClick={handleBuyNow}
-                            className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition cursor-pointer"
+                            disabled={!isLoaded}
+                            className={`w-full py-3.5 transition ${
+                                !isLoaded
+                                    ? 'bg-orange-700 text-slate-300 cursor-not-allowed opacity-50'
+                                    : 'bg-orange-500 text-white hover:bg-orange-600 cursor-pointer'
+                            }`}
                         >
-                            Buy now
+                            {!isLoaded ? 'Loading...' : 'Buy now'}
                         </button>
                     </div>
                 </div>

@@ -18,7 +18,7 @@ const Navbar = () => {
     { href: "/contact", label: "Contact" },
   ];
 
-  const { isSeller, router, user } = useAppContext();
+  const { isSeller, router, user, isLoaded } = useAppContext();
   const { openSignIn } = useClerk(); 
 
   return (
@@ -50,36 +50,40 @@ const Navbar = () => {
             alt="search icon"
             className='w-4 h-4'
           />
-          {user 
-          ? <>
-            <UserButton>
-              <UserButton.MenuItems>
-                <UserButton.Action 
-                  label='Cart'
-                  labelIcon={<CartIcon/>}
-                  onClick={() => router.push("/cart")}
-                />
-              </UserButton.MenuItems>
-              <UserButton.MenuItems>
-                <UserButton.Action 
-                  label='My Orders'
-                  labelIcon={<BagIcon/>}
-                  onClick={() => router.push("/my-orders")}
-                />
-              </UserButton.MenuItems>
-          </UserButton>
-          </>
-          :
-          <button
-            onClick={() => openSignIn()}
-            className='flex items-center gap-2 hover:text-white transition cursor-pointer'
-          >
-            <Image 
-              src={assets.user_icon}
-              alt='user icon'
-            />
+          {!isLoaded ? (
+            // Show loading state while Clerk is loading
+            <div className="w-8 h-8 rounded-full bg-slate-700 animate-pulse"></div>
+          ) : user ? (
+            <>
+              <UserButton>
+                <UserButton.MenuItems>
+                  <UserButton.Action 
+                    label='Cart'
+                    labelIcon={<CartIcon/>}
+                    onClick={() => router.push("/cart")}
+                  />
+                </UserButton.MenuItems>
+                <UserButton.MenuItems>
+                  <UserButton.Action 
+                    label='My Orders'
+                    labelIcon={<BagIcon/>}
+                    onClick={() => router.push("/my-orders")}
+                  />
+                </UserButton.MenuItems>
+              </UserButton>
+            </>
+          ) : (
+            <button
+              onClick={() => openSignIn()}
+              className='flex items-center gap-2 hover:text-white transition cursor-pointer'
+            >
+              <Image 
+                src={assets.user_icon}
+                alt='user icon'
+              />
               Account
-          </button>}
+            </button>
+          )}
         </ul>
 
         <div className='flex items-center md:hidden gap-3'>
@@ -91,45 +95,48 @@ const Navbar = () => {
             </button>
           }
 
-          {
-           user 
-           ? <>
-               <UserButton>
-               <UserButton.MenuItems>
-                <UserButton.Action 
-                  label='Home'
-                  labelIcon={<HomeIcon/>}
-                  onClick={() => router.push("/")}
-                />
-               </UserButton.MenuItems> 
-               <UserButton.MenuItems>
-                <UserButton.Action 
-                  label='Products'
-                  labelIcon={<BoxIcon/>}
-                  onClick={() => router.push("/shop")}
-                />
-              </UserButton.MenuItems> 
-               <UserButton.MenuItems>
-                <UserButton.Action 
-                  label='Cart'
-                  labelIcon={<CartIcon/>}
-                  onClick={() => router.push("/cart")}
-                />
-              </UserButton.MenuItems> 
-               <UserButton.MenuItems>
-                <UserButton.Action 
-                  label='My Orders'
-                  labelIcon={<BagIcon/>}
-                  onClick={() => router.push("/my-orders")}
-                />
-              </UserButton.MenuItems> 
-           </UserButton>
-           </>
-           : <button onClick={() => openSignIn()} className='flex items-center gap-2 hover:text-white transition cursor-pointer'>
-            <Image src={assets.user_icon} alt="user icon" />
-            Account
-          </button>
-          }
+          {!isLoaded ? (
+            // Show loading state while Clerk is loading
+            <div className="w-8 h-8 rounded-full bg-slate-700 animate-pulse"></div>
+          ) : user ? (
+            <>
+              <UserButton>
+                <UserButton.MenuItems>
+                  <UserButton.Action 
+                    label='Home'
+                    labelIcon={<HomeIcon/>}
+                    onClick={() => router.push("/")}
+                  />
+                </UserButton.MenuItems> 
+                <UserButton.MenuItems>
+                  <UserButton.Action 
+                    label='Products'
+                    labelIcon={<BoxIcon/>}
+                    onClick={() => router.push("/shop")}
+                  />
+                </UserButton.MenuItems> 
+                <UserButton.MenuItems>
+                  <UserButton.Action 
+                    label='Cart'
+                    labelIcon={<CartIcon/>}
+                    onClick={() => router.push("/cart")}
+                  />
+                </UserButton.MenuItems> 
+                <UserButton.MenuItems>
+                  <UserButton.Action 
+                    label='My Orders'
+                    labelIcon={<BagIcon/>}
+                    onClick={() => router.push("/my-orders")}
+                  />
+                </UserButton.MenuItems> 
+              </UserButton>
+            </>
+          ) : (
+            <button onClick={() => openSignIn()} className='flex items-center gap-2 hover:text-white transition cursor-pointer'>
+              <Image src={assets.user_icon} alt="user icon" />
+              Account
+            </button>
+          )}
 
         </div>
     </nav>
