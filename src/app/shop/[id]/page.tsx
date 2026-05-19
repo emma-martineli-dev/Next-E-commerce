@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
-import { assets } from "@assets/assets";
+import { assets, HeartIcon } from "@assets/assets";
 import ProductCard from "@components/ProductCard";
 import Navbar from "@components/Navbar";
 import Footer from "@components/seller/Footer";
@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 
 const Product = () => {
     const { id } = useParams();
-    const { products, router, addToCart, user, isLoaded } = useAppContext();
+    const { products, router, addToCart, user, isLoaded, favorites, toggleFavorite } = useAppContext();
     const { openSignIn } = useClerk();
 
     const [mainImage, setMainImage] = useState<string | null>(null);
@@ -113,12 +113,34 @@ const Product = () => {
                     <p className="text-slate-400 mt-3">
                         {productData.description}
                     </p>
-                    <p className="text-3xl font-medium mt-6 text-slate-100">
-                        ${productData.offerPrice}
-                        <span className="text-base font-normal text-slate-500 line-through ml-2">
-                            ${productData.price}
-                        </span>
-                    </p>
+                    <div className="flex items-center justify-between mt-6">
+                        <p className="text-3xl font-medium text-slate-100">
+                            ${productData.offerPrice}
+                            <span className="text-base font-normal text-slate-500 line-through ml-2">
+                                ${productData.price}
+                            </span>
+                        </p>
+                        <button
+                            onClick={() => {
+                                // Don't do anything if Clerk is still loading
+                                if (!isLoaded) {
+                                    return;
+                                }
+                                
+                                if (!user) {
+                                    toast.error("Please sign in to add items to favorites.");
+                                    openSignIn({ redirectUrl: `/shop/${id}` });
+                                    return;
+                                }
+                                
+                                toggleFavorite(productData._id);
+                            }}
+                            className="p-3 bg-[#0C1F35] hover:bg-[#112844] rounded-full border border-[#1E3A5F] transition"
+                            aria-label={favorites.includes(productData._id) ? "Remove from favorites" : "Add to favorites"}
+                        >
+                            <HeartIcon filled={favorites.includes(productData._id)} />
+                        </button>
+                    </div>
                     <hr className="border-[#1E3A5F] my-6" />
                     <div className="overflow-x-auto">
                         <table className="table-auto border-collapse w-full max-w-72">

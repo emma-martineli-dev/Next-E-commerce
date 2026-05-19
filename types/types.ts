@@ -18,6 +18,12 @@ export type AppContextType = {
   updateCartQuantity: (itemId: string, quantity: number) => void;
   getCartCount: () => number;
   getCartAmount: () => number;
+  // Favorites
+  favorites: string[];
+  setFavorites: React.Dispatch<React.SetStateAction<string[]>>;
+  toggleFavorite: (itemId: string) => void;
+  removeFavorite: (itemId: string) => void;
+  getFavoritesCount: () => number;
 };
 
 export type Product = {

@@ -77,6 +77,26 @@ export const AppContextProvider = (props: { children: ReactNode }) => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Favorites state — persisted to localStorage
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  // Load persisted favorites from localStorage on initial mount
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem("favorites");
+    if (storedFavorites) {
+      try {
+        setFavorites(JSON.parse(storedFavorites));
+      } catch (err) {
+        console.error("Failed to parse stored favorites:", err);
+      }
+    }
+  }, []);
+
+  // Persist favorites to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
   /** Loads product data from the static constants file (demo mode). */
   const fetchProductData = async () => {
     setProducts(productsData);
@@ -141,6 +161,55 @@ export const AppContextProvider = (props: { children: ReactNode }) => {
       return item ? total + item.offerPrice * qty : total;
     }, 0);
 
+  /**
+   * toggleFavorite
+   * Toggles a product in the favorites list.
+   * Requires the user to be signed in — shows a toast and opens
+   * the Clerk sign-in modal if they are not.
+   */
+  const toggleFavorite = (itemId: string) => {
+    if (!user) {
+      toast.error("Please sign in to add items to your favorites.");
+      if (isLoaded) {
+        openSignIn({ redirectUrl: pathname });
+      }
+      return;
+    }
+    
+    const favoritesData = structuredClone(favorites);
+    const isFavorite = favoritesData.includes(itemId);
+    
+    if (isFavorite) {
+      // Remove from favorites
+      setFavorites(favoritesData.filter(id => id !== itemId));
+      toast.success("Item removed from favorites!");
+    } else {
+      // Add to favorites
+      setFavorites([...favoritesData, itemId]);
+      toast.success("Item added to favorites!");
+    }
+  };
+
+  /**
+   * removeFavorite
+   * Removes a product from the favorites list.
+   */
+  const removeFavorite = (itemId: string) => {
+    if (!user) {
+      toast.error("Please sign in to manage your favorites.");
+      if (isLoaded) {
+        openSignIn({ redirectUrl: pathname });
+      }
+      return;
+    }
+    
+    setFavorites(favorites.filter(id => id !== itemId));
+    toast.success("Item removed from favorites!");
+  };
+
+  /** Returns the total number of items in favorites. */
+  const getFavoritesCount = () => favorites.length;
+
   useEffect(() => { fetchProductData(); }, []);
   useEffect(() => { fetchUserData(); }, [user]);
 
@@ -161,6 +230,12 @@ export const AppContextProvider = (props: { children: ReactNode }) => {
     updateCartQuantity,
     getCartCount,
     getCartAmount,
+    // Favorites
+    favorites,
+    setFavorites,
+    toggleFavorite,
+    removeFavorite,
+    getFavoritesCount,
   };
 
   return (

@@ -1,7 +1,7 @@
 "use client"; 
 import Image from 'next/image';
 import NavLink from '@utils/NavLink';
-import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon } from '@assets/assets';
+import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, HeartIcon } from '@assets/assets';
 import { useAppContext } from '@context/AppContext';
 import { useClerk, UserButton } from '@clerk/nextjs';
 
@@ -70,6 +70,13 @@ const Navbar = () => {
                     onClick={() => router.push("/my-orders")}
                   />
                 </UserButton.MenuItems>
+                <UserButton.MenuItems>
+                  <UserButton.Action 
+                    label='Favorites'
+                    labelIcon={<HeartIcon/>}
+                    onClick={() => router.push("/favorites")}
+                  />
+                </UserButton.MenuItems>
               </UserButton>
             </>
           ) : (
@@ -127,6 +134,13 @@ const Navbar = () => {
                     label='My Orders'
                     labelIcon={<BagIcon/>}
                     onClick={() => router.push("/my-orders")}
+                  />
+                </UserButton.MenuItems> 
+                <UserButton.MenuItems>
+                  <UserButton.Action 
+                    label='Favorites'
+                    labelIcon={<HeartIcon/>}
+                    onClick={() => router.push("/favorites")}
                   />
                 </UserButton.MenuItems> 
               </UserButton>

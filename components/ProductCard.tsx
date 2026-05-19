@@ -8,7 +8,7 @@
  * Both actions require the user to be signed in.
  */
 
-import { assets } from "@assets/assets";
+import { assets, HeartIcon } from "@assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@context/AppContext";
 import { useClerk } from "@clerk/nextjs";
@@ -20,7 +20,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const { currency, router, user, isLoaded, addToCart } = useAppContext();
+  const { currency, router, user, isLoaded, addToCart, favorites, toggleFavorite } = useAppContext();
   const { openSignIn } = useClerk();
 
   /**
@@ -60,13 +60,27 @@ const ProductCard = ({ product }: ProductCardProps) => {
           height={800}
           className="group-hover:scale-105 transition duration-300 object-contain w-4/5 h-4/5"
         />
-        {/* Wishlist button — stops propagation to avoid navigating to product page */}
+        {/* Favorites button — stops propagation to avoid navigating to product page */}
         <button
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            // Don't do anything if Clerk is still loading
+            if (!isLoaded) {
+              return;
+            }
+            
+            if (!user) {
+              toast.error("Please sign in to add items to favorites.");
+              openSignIn({ redirectUrl: `/shop/${product._id}` });
+              return;
+            }
+            
+            toggleFavorite(product._id);
+          }}
           className="absolute top-2 right-2 bg-slate-100 hover:bg-white p-2 rounded-full shadow-md border border-slate-200 transition"
-          aria-label="Add to wishlist"
+          aria-label={favorites.includes(product._id) ? "Remove from favorites" : "Add to favorites"}
         >
-          <Image src={assets.heart_icon} alt="wishlist" className="h-3 w-3" />
+          <HeartIcon filled={favorites.includes(product._id)} />
         </button>
       </div>
 
