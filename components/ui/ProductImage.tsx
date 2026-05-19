@@ -21,7 +21,7 @@ const ProductImage = ({ src, alt, size = 64, className = "" }: ProductImageProps
       className={`bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ${className}`}
     >
       <Image
-        src={src}
+        src={src && src !== "" && src !== null ? src : "/placeholder-image.png"}
         alt={alt}
         width={size}
         height={size}
