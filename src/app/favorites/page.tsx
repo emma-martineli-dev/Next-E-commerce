@@ -65,13 +65,6 @@ const Favorites = () => {
               {favoriteProducts.map((product) => (
                 <div key={product._id} className="relative group">
                   <ProductCard product={product} />
-                  <button
-                    onClick={(e) => handleRemoveFavorite(product._id, e)}
-                    className="absolute top-3 right-3 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg border border-slate-300 transition opacity-0 group-hover:opacity-100"
-                    aria-label="Remove from favorites"
-                  >
-                    <HeartIcon filled={true} />
-                  </button>
                 </div>
               ))}
             </div>
